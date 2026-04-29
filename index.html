@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>未来予創組織 - パチンコCR Ver.</title>
+<title>未来予創組織</title>
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+JP:wght@700;900&family=Permanent+Marker&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700&family=Noto+Serif+JP:wght@700;900&display=swap');
 
 body {
-background-color: #000;
-color: #fff;
+background-color: #050a15;
+color: #e0e0e0;
 font-family: 'Noto Serif JP', serif;
 margin: 0;
 height: 100vh;
@@ -19,279 +19,253 @@ flex-direction: column;
 align-items: center;
 justify-content: center;
 overflow: hidden;
-/* 背景をよりダークに、中心をギラギラに */
-background: radial-gradient(circle at center, #311b92 0%, #000 70%);
+/* 背景をより深く、多層的なグラデーションに */
+background: radial-gradient(circle at center, #1a237e 0%, #0a1128 50%, #02050a 100%);
 position: relative;
 }
 
-/* スピード感のある背景線（リーチ演出） */
-#speed-lines {
-position: fixed;
-top: 0; left: 0; width: 100%; height: 100%;
-background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(255, 255, 255, 0.05) 2px, rgba(255, 255, 255, 0.05) 4px);
-opacity: 0;
-pointer-events: none;
-z-index: 1;
-transition: opacity 0.5s ease;
+/* --- 追加：動的な背景装飾 --- */
+body::before {
+    content: "";
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-image: 
+        radial-gradient(1px 1px at 20px 30px, #fff, rgba(0,0,0,0)),
+        radial-gradient(1px 1px at 40px 70px, #fff, rgba(0,0,0,0)),
+        radial-gradient(2px 2px at 50px 160px, #4fc3f7, rgba(0,0,0,0));
+    background-repeat: repeat;
+    background-size: 200px 200px;
+    opacity: 0.3;
+    z-index: 1;
 }
-#speed-lines.active { opacity: 1; }
 
-/* スクリーンシェイク（強化） */
-.shake { animation: screenShake 0.3s ease-in-out infinite; }
+/* スキャンライン効果 */
+.scanline {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.1) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.02), rgba(0, 255, 0, 0.01), rgba(0, 0, 255, 0.02));
+    background-size: 100% 4px, 3px 100%;
+    pointer-events: none;
+    z-index: 15;
+}
+
+/* 流星演出 */
+.star {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: #fff;
+    border-radius: 50%;
+    opacity: 0;
+    box-shadow: 0 0 10px #4fc3f7;
+    animation: shootingStar 5s linear infinite;
+}
+
+@keyframes shootingStar {
+    0% { transform: rotate(315deg) translateX(0); opacity: 1; }
+    20% { transform: rotate(315deg) translateX(-1000px); opacity: 0; }
+    100% { transform: rotate(315deg) translateX(-1000px); opacity: 0; }
+}
+
+/* 浮遊するオーブ */
+.orb {
+    position: absolute;
+    width: 150px;
+    height: 150px;
+    background: radial-gradient(circle, rgba(79, 195, 247, 0.1) 0%, rgba(26, 35, 126, 0) 70%);
+    border-radius: 50%;
+    filter: blur(30px);
+    z-index: 2;
+    animation: floatOrb 15s infinite ease-in-out;
+}
+
+@keyframes floatOrb {
+    0%, 100% { transform: translate(0, 0); }
+    33% { transform: translate(30vw, 20vh); }
+    66% { transform: translate(-20vw, 40vh); }
+}
+
+/* --- ここから元のスタイル --- */
+
+/* スクリーンシェイク */
+.shake { animation: screenShake 0.4s ease-in-out; }
 @keyframes screenShake {
 0%, 100% { transform: translateX(0); }
-10% { transform: translateX(-15px) translateY(8px) rotate(1deg); }
-30% { transform: translateX(15px) translateY(-8px) rotate(-1deg); }
-50% { transform: translateX(-10px) translateY(10px) rotate(0.5deg); }
-70% { transform: translateX(10px) translateY(-10px) rotate(-0.5deg); }
-90% { transform: translateX(-5px) translateY(5px); }
+25% { transform: translateX(-10px) translateY(5px); }
+50% { transform: translateX(10px) translateY(-5px); }
+75% { transform: translateX(-5px) translateY(5px); }
 }
 
-/* --- カットイン演出（役物風・強化） --- */
+/* --- カットイン演出 --- */
 #cut-in {
 position: fixed;
 top: 50%; left: 50%;
 transform: translate(-50%, -50%);
 width: 100%;
 height: 0;
-/* 背景を「激熱」の赤・金グラデーションに */
-background: linear-gradient(135deg, #d50000 0%, #ffab00 50%, #d50000 100%);
+background: rgba(0, 0, 0, 0.95);
 display: flex;
 align-items: center;
 justify-content: center;
 z-index: 200;
 overflow: hidden;
 pointer-events: none;
-border-top: 5px solid transparent;
-border-bottom: 5px solid transparent;
+border-top: 2px solid transparent;
+border-bottom: 2px solid transparent;
 opacity: 0;
 visibility: hidden;
-transition: height 0.1s ease, opacity 0.1s ease;
-box-shadow: 0 0 50px rgba(255, 215, 0, 0.8);
+transition: height 0.2s ease, opacity 0.1s ease;
 }
 
 #cut-in.active {
-height: 250px; /* 少し大きく */
+height: 180px;
 opacity: 1;
 visibility: visible;
-border-top: 5px solid #fff;
-border-bottom: 5px solid #fff;
-animation: cutInBounce 0.3s ease-out;
+border-top: 2px solid #4fc3f7;
+border-bottom: 2px solid #4fc3f7;
+animation: cutInBounce 0.4s ease-out;
 }
 
 #cut-in-text {
-font-size: clamp(3rem, 15vw, 6rem); 
+font-size: clamp(2rem, 10vw, 4rem); 
 font-weight: 900;
 color: #fff;
-letter-spacing: 0.5rem;
-/* 虹色ネオン点滅 */
-text-shadow: 0 0 20px #fff, 0 0 30px #ff0000, 0 0 40px #ff0000, 0 0 50px #ff0000, 0 0 60px #ff0000, 0 0 70px #ff0000, 0 0 80px #ff0000;
-animation: rainbowText 0.2s linear infinite;
-transform: skewX(-15deg);
+letter-spacing: 0.2rem;
+text-shadow: 0 0 20px #4fc3f7, 0 0 40px #1a237e;
+transform: skewX(-20deg);
 opacity: 0;
 white-space: nowrap;
 }
 
 #cut-in.active #cut-in-text {
-animation: textIn 0.3s 0.05s forwards, rainbowText 0.1s linear infinite;
-}
-
-/* キュイン音視覚化 */
-#kyuin-text {
-position: fixed;
-top: 10%; left: 50%;
-transform: translateX(-50%) scale(0);
-font-family: 'Permanent Marker', cursive;
-font-size: 8rem;
-color: #ffeb3b;
-text-shadow: 0 0 20px #fff, 0 0 40px #f57c00;
-z-index: 250;
-pointer-events: none;
-opacity: 0;
-}
-#kyuin-text.active { animation: kyuinAnim 0.5s ease-out forwards; }
-
-@keyframes kyuinAnim {
-0% { transform: translateX(-50%) scale(0); opacity: 0; }
-50% { transform: translateX(-50%) scale(1.5); opacity: 1; }
-100% { transform: translateX(-50%) scale(1); opacity: 1; }
-}
-
-@keyframes rainbowText {
-0% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
-16% { color: #ffab00; text-shadow: 0 0 20px #ffab00; }
-33% { color: #ffeb3b; text-shadow: 0 0 20px #ffeb3b; }
-50% { color: #4caf50; text-shadow: 0 0 20px #4caf50; }
-66% { color: #2196f3; text-shadow: 0 0 20px #2196f3; }
-83% { color: #9c27b0; text-shadow: 0 0 20px #9c27b0; }
-100% { color: #ff0000; text-shadow: 0 0 20px #ff0000; }
+animation: textIn 0.4s 0.1s forwards;
 }
 
 @keyframes cutInBounce {
 0% { width: 0; }
-70% { width: 130%; }
+50% { width: 120%; }
 100% { width: 100%; }
 }
 
 @keyframes textIn {
-0% { transform: translate(200px, 0) skewX(-15deg); opacity: 0; }
-100% { transform: translate(0, 0) skewX(-15deg); opacity: 1; }
+0% { transform: translate(100px, 0) skewX(-20deg); opacity: 0; }
+100% { transform: translate(0, 0) skewX(-20deg); opacity: 1; }
 }
 
-/* --- UIパーツ（ネオン・ギラギラ風） --- */
+/* --- UIパーツ --- */
 .main-title {
-font-size: clamp(2.5rem, 10vw, 3.5rem);
-margin-bottom: 5px;
-/* タイトルを虹色点滅に */
-background: linear-gradient(to bottom, #fff 0%, #ffeb3b 30%, #f57c00 60%, #fff 100%);
+font-size: clamp(1.8rem, 8vw, 2.5rem);
+margin-bottom: 10px;
+background: linear-gradient(to bottom, #fff 0%, #4fc3f7 50%, #1565c0 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
 font-weight: 900;
-filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7));
-animation: titleGlow 1s ease-in-out infinite alternate;
+filter: drop-shadow(0 0 15px rgba(79, 195, 247, 0.5));
 z-index: 10;
 text-align: center;
-letter-spacing: 0.1em;
-}
-
-@keyframes titleGlow {
-from { filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.7)); }
-to { filter: drop-shadow(0 0 25px rgba(255, 215, 0, 0.9)); }
 }
 
 #incantation {
-font-size: 1rem;
-color: #fff;
-text-shadow: 0 0 10px #ffab00;
+font-size: 0.9rem;
+color: #b3e5fc;
 height: 1.5rem;
-margin-bottom: 20px;
+margin-bottom: 15px;
 font-style: italic;
-opacity: 1;
+opacity: 0.7;
 z-index: 10;
 }
 
 .display-container {
 position: relative;
-width: 90%;
-max-width: 900px;
-height: 300px; /* 少し高く */
-background: rgba(0, 0, 0, 0.9);
-border: 4px solid #fff;
-/* 虹色の枠線 */
-border-image: linear-gradient(to bottom right, #ff0000, #ffab00, #ffeb3b, #4caf50, #2196f3, #9c27b0, #ff0000) 1;
-box-shadow: 0 0 40px rgba(255, 255, 255, 0.5), inset 0 0 50px rgba(255, 255, 255, 0.2);
-border-radius: 10px;
+width: 85%;
+max-width: 800px;
+height: 250px;
+background: rgba(0, 0, 0, 0.6);
+border: 2px solid #4fc3f7;
+box-shadow: 0 0 20px rgba(79, 195, 247, 0.4), inset 0 0 30px rgba(0, 188, 212, 0.2);
+border-radius: 5px;
 display: flex;
 align-items: center;
 justify-content: center;
 overflow: hidden;
+backdrop-filter: blur(5px);
 z-index: 10;
 }
 
 .magic-circle {
 position: absolute;
 width: 0; height: 0;
-border: 5px solid #fff; /* 太く */
+border: 2px solid #fff;
 border-radius: 50%;
 opacity: 0;
 z-index: 5;
 pointer-events: none;
-box-shadow: 0 0 30px #fff;
 }
-.magic-circle-anim { animation: circleExpand 0.6s ease-out forwards; }
+.magic-circle-anim { animation: circleExpand 0.8s ease-out forwards; }
 
 @keyframes circleExpand {
-0% { width: 0; height: 0; opacity: 1; border-width: 30px; }
-100% { width: 1200px; height: 1200px; opacity: 0; border-width: 1px; }
+0% { width: 0; height: 0; opacity: 1; border-width: 10px; }
+100% { width: 1000px; height: 1000px; opacity: 0; border-width: 1px; }
 }
 
 #result {
-font-size: clamp(1.5rem, 6vw, 3rem);
+font-size: clamp(1.2rem, 5vw, 2.5rem);
 text-align: center;
 padding: 15px;
-color: #fff;
+color: #81d4fa;
 font-weight: 900;
-text-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
-line-height: 1.2;
+text-shadow: 0 0 10px rgba(129, 212, 250, 0.5);
+line-height: 1.3;
 }
 
 .decided {
-animation: magicAwaken 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-/* 決定時は虹色グラデーション */
-background: linear-gradient(135deg, #ff0000 0%, #ffab00 25%, #ffeb3b 50%, #4caf50 75%, #2196f3 100%);
+animation: magicAwaken 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+background: linear-gradient(to bottom, #fff 0%, #ffeb3b 40%, #f57c00 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
-font-size: clamp(2rem, 8vw, 4.5rem) !important;
-filter: drop-shadow(0 0 25px rgba(255, 255, 255, 1));
-letter-spacing: -0.05em;
+font-size: clamp(1.5rem, 6.5vw, 3.5rem) !important;
+filter: drop-shadow(0 0 20px rgba(255, 235, 59, 0.8));
 }
 
 @keyframes magicAwaken {
-0% { transform: scale(0.1); filter: brightness(10) blur(20px); opacity: 0; }
-70% { transform: scale(1.2); filter: brightness(2) blur(0px); opacity: 1; }
-100% { transform: scale(1); filter: brightness(1) blur(0px); opacity: 1; }
+0% { transform: scale(0.3); filter: brightness(5) blur(10px); }
+70% { transform: scale(1.1); filter: brightness(2) blur(0px); }
+100% { transform: scale(1); filter: brightness(1) blur(0px); }
 }
 
-/* --- ボタン（パトランプ風） --- */
 #drawBtn {
-margin-top: 40px;
-background: linear-gradient(to bottom, #d50000, #ff1744);
-color: #fff;
-border: 4px solid #fff;
-border-radius: 50px; /* 丸く */
-padding: 15px 50px;
-font-size: 1.5rem;
+margin-top: 30px;
+background: transparent;
+color: #ffb74d;
+border: 2px solid #ffb74d;
+padding: 12px 35px;
+font-size: 1.2rem;
 font-weight: 900;
 cursor: pointer;
-transition: all 0.2s ease;
+transition: all 0.3s ease;
 z-index: 10;
-box-shadow: 0 10px 0 #b71c1c, 0 15px 30px rgba(213, 0, 0, 0.5);
-position: relative;
-overflow: hidden;
-}
-
-/* ボタン点滅（リーチ演出） */
-#drawBtn.flash { animation: btnFlash 0.3s ease-in-out infinite alternate; }
-@keyframes btnFlash {
-from { background: linear-gradient(to bottom, #d50000, #ff1744); box-shadow: 0 10px 0 #b71c1c, 0 0 30px #ff1744; }
-to { background: linear-gradient(to bottom, #ff1744, #ff5252); box-shadow: 0 10px 0 #b71c1c, 0 0 50px #fff; }
 }
 
 #drawBtn:hover {
-transform: translateY(3px);
-box-shadow: 0 7px 0 #b71c1c, 0 10px 20px rgba(213, 0, 0, 0.4);
+background: rgba(255, 183, 77, 0.1);
+box-shadow: 0 0 30px rgba(255, 181, 77, 0.6);
+transform: scale(1.05);
 }
 
-#drawBtn:active {
-transform: translateY(10px);
-box-shadow: 0 0 0 #b71c1c;
-}
-
-#drawBtn:disabled {
-background: #555;
-border-color: #777;
-box-shadow: 0 0 0 #333;
-color: #aaa;
-cursor: not-allowed;
-}
-
-/* --- 浮遊テキスト（リーチ・強化） --- */
 .floating-text {
 position: absolute;
 font-weight: 900;
 pointer-events: none;
 z-index: 5;
-animation: fluffyFade 1.2s ease-out forwards;
-font-family: 'Permanent Marker', cursive; /* よりパチンコっぽいフォント */
+animation: fluffyFade 1.5s ease-out forwards;
 }
 
 @keyframes fluffyFade {
-0% { transform: translate(0, 0) scale(0.5) rotate(var(--initial-rotate)); opacity: 0; filter: blur(10px); }
-20% { transform: translate(0, -10px) scale(2) rotate(var(--initial-rotate)); opacity: 1; filter: blur(0px); }
-100% { transform: translate(0, -50px) scale(2.5) rotate(var(--initial-rotate)); opacity: 0; filter: blur(15px); }
+0% { transform: translate(0, 0) scale(0.8) rotate(var(--initial-rotate)); opacity: 0; filter: blur(8px); }
+30% { transform: translate(0, -10px) scale(1) rotate(var(--initial-rotate)); opacity: 0.7; filter: blur(0px); }
+100% { transform: translate(0, -30px) scale(1.2) rotate(var(--initial-rotate)); opacity: 0; filter: blur(12px); }
 }
 
-/* --- 各種フラッシュ・エフェクト --- */
 .flash {
 position: fixed;
 top: 0; left: 0; width: 100%; height: 100%;
@@ -300,53 +274,38 @@ opacity: 0;
 pointer-events: none;
 z-index: 300;
 }
-/* 白フラッシュ */
-.flash-anim { animation: flashEffect 0.3s ease-out; }
+.flash-anim { animation: flashEffect 0.4s ease-out; }
 @keyframes flashEffect {
-0% { opacity: 1; }
+0% { opacity: 0.9; }
 100% { opacity: 0; }
 }
-
-/* 虹フラッシュ（確定） */
-#rainbow-flash {
-position: fixed;
-top: 0; left: 0; width: 100%; height: 100%;
-background: linear-gradient(45deg, #ff0000, #ffab00, #ffeb3b, #4caf50, #2196f3, #9c27b0, #ff0000);
-opacity: 0;
-pointer-events: none;
-z-index: 310;
-}
-.rainbow-flash-anim { animation: rainbowFlashEffect 0.5s linear infinite; }
-@keyframes rainbowFlashEffect {
-0% { opacity: 0.8; background-position: 0% 50%; }
-50% { opacity: 0.5; background-position: 100% 50%; }
-100% { opacity: 0.8; background-position: 0% 50%; }
-}
-
 </style>
 </head>
 <body>
 
+<div class="scanline"></div>
+<div class="orb" style="top: 10%; left: 10%;"></div>
+<div class="orb" style="bottom: 20%; right: 10%; animation-delay: -5s;"></div>
+<div class="star" style="top: 10%; right: -100px; animation-delay: 0s;"></div>
+<div class="star" style="top: 40%; right: -100px; animation-delay: 2s;"></div>
+<div class="star" style="top: 70%; right: -100px; animation-delay: 4s;"></div>
+
 <div id="effect-layer"></div>
-<div id="speed-lines"></div>
 <div class="flash" id="flash-effect"></div>
-<div id="rainbow-flash"></div>
 <div class="magic-circle" id="magic-circle"></div>
 
 <div id="cut-in">
-<div id="cut-in-text">激熱ッ！</div>
+<div id="cut-in-text">見えた…！</div>
 </div>
-
-<div id="kyuin-text">キュイン！</div>
 
 <div class="main-title">未来予創組織</div>
-<div id="incantation">運命の変動開始...！</div>
+<div id="incantation">未来が静かに胎動している...</div>
 
 <div class="display-container" id="container">
-<div id="result">P-START</div>
+<div id="result">Waiting...</div>
 </div>
 
-<button id="drawBtn" onclick="runFortuneTelling()">運命のレバーを引け！</button>
+<button id="drawBtn" onclick="runFortuneTelling()">運命の扉を開く</button>
 
 <script>
 const departments = [
@@ -393,23 +352,20 @@ const departments = [
 ];
 
 let effectTimer;
-let speedTimer;
 
 function spawnText() {
 const container = document.getElementById('effect-layer');
-const words = ["激熱ッ！", "鉄板！", "確定！？", "リーチ！", "続け！", "CHANCE", "虹色！"];
+const words = ["わくわく", "どきどき", "…っ！", "ドキドキ", "どこだ…", "頼む…！", "そわそわ"];
 const span = document.createElement('span');
 span.innerText = words[Math.floor(Math.random() * words.length)];
 span.className = 'floating-text';
-span.style.left = (5 + Math.random() * 90) + '%';
-span.style.top = (20 + Math.random() * 60) + '%';
-span.style.setProperty('--initial-rotate', (Math.random() - 0.5) * 60 + 'deg');
-// 派手な色（赤、金、虹）
-span.style.color = span.innerText.includes("激熱") || span.innerText.includes("確定") || span.innerText.includes("虹色") ? "#ffeb3b" : "#ff1744";
-if(span.innerText.includes("CHANCE")) span.style.color = "#4caf50";
-span.style.fontSize = (Math.random() * 2.0 + 2.0) + 'rem'; // 巨大化
+span.style.left = (10 + Math.random() * 80) + '%';
+span.style.top = (10 + Math.random() * 80) + '%';
+span.style.setProperty('--initial-rotate', (Math.random() - 0.5) * 40 + 'deg');
+span.style.color = span.innerText.includes("どき") || span.innerText.includes("頼む") ? "#ff80ab" : "#4fc3f7";
+span.style.fontSize = (Math.random() * 1.0 + 1.0) + 'rem';
 container.appendChild(span);
-setTimeout(() => span.remove(), 1200);
+setTimeout(() => span.remove(), 1500);
 }
 
 function runFortuneTelling() {
@@ -417,91 +373,62 @@ const resultDiv = document.getElementById("result");
 const btn = document.getElementById("drawBtn");
 const incant = document.getElementById("incantation");
 const flash = document.getElementById("flash-effect");
-const rainbowFlash = document.getElementById("rainbow-flash");
 const circle = document.getElementById("magic-circle");
 const cutIn = document.getElementById("cut-in");
-const speedLines = document.getElementById("speed-lines");
-const kyuinText = document.getElementById("kyuin-text");
 
 btn.disabled = true;
-btn.classList.add("flash"); // ボタン点滅
 resultDiv.classList.remove("decided");
-incant.innerText = "大当りを狙え...！";
-speedLines.classList.add("active"); // スピード線
+incant.innerText = "可能性が一点に集約していく...";
 
-// 演出タイマー（リーチ中）
-effectTimer = setInterval(spawnText, 80); // テキスト増量
+effectTimer = setInterval(spawnText, 100);
 
-let duration = 3500; // 演出時間を少し長く
+let duration = 2500; 
 let startTime = Date.now();
-let baseInterval = 100; // 初期変動速度
 
-// 変動タイマー（数字回転風）
-function startRotation() {
+const timer = setInterval(() => {
 const elapsed = Date.now() - startTime;
 resultDiv.innerText = departments[Math.floor(Math.random() * departments.length)];
 
-// 残り時間に応じて速度アップ（加速演出）
-if (elapsed > duration * 0.5) baseInterval = 50;
-if (elapsed > duration * 0.8) baseInterval = 20;
-
 if (elapsed > duration) {
-clearInterval(speedTimer);
+clearInterval(timer);
 clearInterval(effectTimer);
-btn.classList.remove("flash");
+// 結果が出る直前にカットインを表示
 showCutIn();
-} else {
-clearInterval(speedTimer);
-speedTimer = setTimeout(startRotation, baseInterval);
 }
-}
-speedTimer = setTimeout(startRotation, baseInterval);
+}, 50);
 
-// カットイン（確定演出風）
 function showCutIn() {
 cutIn.classList.add("active");
 
-// カットイン中にキュイン！
+// カットインが表示されている間に結果を準備し、一気に表示
 setTimeout(() => {
-kyuinText.classList.add("active");
-}, 200);
-
-// カットイン後、大当り発表
-setTimeout(() => {
+// カットインを非表示にする
 cutIn.classList.remove("active");
-kyuinText.classList.remove("active");
-speedLines.classList.remove("active");
 
-// 同時に虹フラッシュ、振動、サークル
-rainbowFlash.classList.add("rainbow-flash-anim");
+// 同時に結果の演出を開始
+flash.classList.add("flash-anim");
 document.body.classList.add("shake");
 circle.classList.add("magic-circle-anim");
 
 const finalDept = departments[Math.floor(Math.random() * departments.length)];
 resultDiv.innerText = finalDept;
 resultDiv.classList.add("decided");
-incant.innerText = "祝・大当り！運命決定！";
+incant.innerText = "運命は示された。";
 
-// コンフェッティ（巨大化・増量・虹色）
 confetti({
-particleCount: 300, // 増量
-spread: 100, // 広げる
-origin: { y: 0.5 },
-ticks: 300,
-gravity: 0.8,
-scalar: 2, // 巨大化
-colors: ['#ff0000', '#ffeb3b', '#4caf50', '#2196f3', '#9c27b0', '#ffffff']
+particleCount: 100,
+spread: 70,
+origin: { y: 0.6 },
+colors: ['#4fc3f7', '#ffffff', '#ffeb3b']
 });
 
-// 1.5秒後に演出終了
 setTimeout(() => {
-rainbowFlash.classList.remove("rainbow-flash-anim");
+flash.classList.remove("flash-anim");
 document.body.classList.remove("shake");
 circle.classList.remove("magic-circle-anim");
 btn.disabled = false;
-baseInterval = 100; // 速度リセット
-}, 1500);
-}, 1000); // カットイン時間を少し長く
+}, 1000);
+}, 600); // 0.6秒後にカットインを消して結果を表示
 }
 }
 </script>
