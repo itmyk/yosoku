@@ -20,76 +20,9 @@ align-items: center;
 justify-content: center;
 overflow: hidden;
 /* 背景色をより深く、中心の青を鋭く */
-background: radial-gradient(circle at center, #1a237e 0%, #050a15 100%);
+background: radial-gradient(circle at center, #1a237e 0%, #050a15 70%);
 position: relative;
 }
-
-/* --- 追加：サイバー背景演出 --- */
-
-/* グリッドフロア（遠近感） */
-.grid-floor {
-    position: absolute;
-    bottom: -10%;
-    left: -50%;
-    width: 200%;
-    height: 100%;
-    background-image: 
-        linear-gradient(rgba(79, 195, 247, 0.2) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(79, 195, 247, 0.2) 1px, transparent 1px);
-    background-size: 100px 100px;
-    transform: perspective(500px) rotateX(60deg);
-    z-index: 0;
-    mask-image: linear-gradient(to top, rgba(0,0,0,1), transparent);
-    animation: gridMove 10s linear infinite;
-}
-@keyframes gridMove {
-    from { background-position: 0 0; }
-    to { background-position: 0 100px; }
-}
-
-/* 浮遊するデジタル破片 */
-.particle {
-    position: absolute;
-    background: #4fc3f7;
-    opacity: 0.4;
-    filter: blur(1px);
-    z-index: 1;
-    animation: floatParticle 20s infinite linear;
-}
-@keyframes floatParticle {
-    0% { transform: translateY(110vh) rotate(0deg); opacity: 0; }
-    20% { opacity: 0.6; }
-    80% { opacity: 0.6; }
-    100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
-}
-
-/* 巨大な光の渦（背景） */
-.bg-vortex {
-    position: absolute;
-    width: 150vw;
-    height: 150vw;
-    background: radial-gradient(circle, rgba(21, 101, 192, 0.2) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: 0;
-    animation: vortexRotate 30s infinite linear;
-}
-@keyframes vortexRotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-/* スキャンライン */
-.scanline {
-    position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.3) 51%);
-    background-size: 100% 4px;
-    pointer-events: none;
-    z-index: 100;
-    opacity: 0.2;
-}
-
-/* --- 元の演出スタイル --- */
 
 /* スクリーンシェイク */
 .shake { animation: screenShake 0.4s ease-in-out; }
@@ -159,7 +92,7 @@ animation: textIn 0.4s 0.1s forwards;
 /* --- UIパーツ --- */
 .main-title {
 font-size: clamp(1.8rem, 8vw, 2.5rem);
-margin-bottom: 0px;
+margin-bottom: 10px;
 background: linear-gradient(to bottom, #fff 0%, #4fc3f7 50%, #1565c0 100%);
 -webkit-background-clip: text;
 -webkit-text-fill-color: transparent;
@@ -167,17 +100,6 @@ font-weight: 900;
 filter: drop-shadow(0 0 15px rgba(79, 195, 247, 0.5));
 z-index: 10;
 text-align: center;
-}
-
-.sub-title {
-font-family: 'Cinzel', serif;
-font-size: clamp(2.5rem, 12vw, 4rem); /* 文字サイズを大きく調整 */
-margin-bottom: 15px;
-color: #4fc3f7;
-letter-spacing: 0.3em;
-z-index: 10;
-text-align: center;
-text-shadow: 0 0 20px rgba(79, 195, 247, 0.8), 0 0 40px rgba(21, 101, 192, 0.6);
 }
 
 #incantation {
@@ -195,15 +117,15 @@ position: relative;
 width: 85%;
 max-width: 800px;
 height: 250px;
-background: rgba(0, 0, 0, 0.7);
+background: rgba(0, 0, 0, 0.6);
 border: 2px solid #4fc3f7;
-box-shadow: 0 0 25px rgba(79, 195, 247, 0.5), inset 0 0 30px rgba(0, 188, 212, 0.3);
+box-shadow: 0 0 20px rgba(79, 195, 247, 0.4), inset 0 0 30px rgba(0, 188, 212, 0.2);
 border-radius: 5px;
 display: flex;
 align-items: center;
 justify-content: center;
 overflow: hidden;
-backdrop-filter: blur(10px);
+backdrop-filter: blur(5px);
 z-index: 10;
 }
 
@@ -259,8 +181,6 @@ font-weight: 900;
 cursor: pointer;
 transition: all 0.3s ease;
 z-index: 10;
-text-transform: uppercase;
-letter-spacing: 0.1em;
 }
 
 #drawBtn:hover {
@@ -300,16 +220,6 @@ z-index: 300;
 </head>
 <body>
 
-<div class="grid-floor"></div>
-<div class="bg-vortex"></div>
-<div class="scanline"></div>
-
-<div class="particle" style="width:10px;height:10px;left:10%;animation-delay:0s;"></div>
-<div class="particle" style="width:15px;height:15px;left:30%;animation-delay:4s;"></div>
-<div class="particle" style="width:5px;height:5px;left:60%;animation-delay:8s;"></div>
-<div class="particle" style="width:20px;height:20px;left:80%;animation-delay:2s;"></div>
-<div class="particle" style="width:8px;height:8px;left:50%;animation-delay:12s;"></div>
-
 <div id="effect-layer"></div>
 <div class="flash" id="flash-effect"></div>
 <div class="magic-circle" id="magic-circle"></div>
@@ -318,15 +228,14 @@ z-index: 300;
 <div id="cut-in-text">見えた…！</div>
 </div>
 
-<div class="main-title">未来予創組織</div>
-<div class="sub-title">IGP</div>
+<div class="main-title">オペレーションIGP</div>
 <div id="incantation">未来が静かに胎動している...</div>
 
 <div class="display-container" id="container">
 <div id="result">Waiting...</div>
 </div>
 
-<button id="drawBtn" onclick="runFortuneTelling()">オペレーション起動…！</button>
+<button id="drawBtn" onclick="runFortuneTelling()">起動する！！</button>
 
 <script>
 const departments = [
@@ -431,7 +340,8 @@ flash.classList.add("flash-anim");
 document.body.classList.add("shake");
 circle.classList.add("magic-circle-anim");
 
-const finalDept = departments[Math.floor(Math.random() * departments.length)];
+// 修正箇所：必ず「新聞局」が選ばれるように細工
+const finalDept = "新聞局";
 resultDiv.innerText = finalDept;
 resultDiv.classList.add("decided");
 incant.innerText = "運命は示された。";
